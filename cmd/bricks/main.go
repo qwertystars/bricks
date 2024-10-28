@@ -19,6 +19,7 @@ const MaxAllowedParallelDownloads = 5
 
 func main() {
 	// Define default values and usage messages for flags
+	downloadUrl := flag.String("url", "", "Download url")
 	downloadPath := flag.String("path", ".", "Download path")
 	parallelDownloads := flag.Int("n", 3, "Number of parallel file downloads")
 	showVersion := flag.Bool("version", false, "Show version information")
@@ -56,15 +57,22 @@ func main() {
 	}
 }
 
-func parseURL() (string, string) {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter URL: ")
-	inputURL, err := reader.ReadString('\n')
-	if err != nil {
-		log.Fatalf("failed to read URL: %v", err)
+func parseURL(downloadUrl string) (string, string) {
+	var inputURL string
+	if downloadUrl == "" {
+		// Get the URL from stdin if not provided as a flag
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter URL: ")
+		var err error
+		inputURL, err = reader.ReadString('\n')
+		if err != nil {
+			log.Fatalf("failed to read URL: %v", err)
+		}
+		inputURL = strings.TrimSpace(inputURL) // Trim newline and whitespaces
+	} else {
+		inputURL = strings.TrimSpace(downloadUrl)
 	}
-	inputURL = strings.TrimSpace(inputURL) // Trim newline and whitespaces
-
+	
 	// Parse URL and extract UUID
 	parsedURL, err := url.Parse(inputURL)
 	if err != nil {
