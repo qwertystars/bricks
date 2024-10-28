@@ -14,7 +14,7 @@ import (
 	"github.com/vadapavmov/bricks/internal/app"
 )
 
-const Version = "v1.2.0"
+const Version = "v1.3.1"
 const MaxAllowedParallelDownloads = 5
 
 func main() {
