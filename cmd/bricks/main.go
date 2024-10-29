@@ -14,12 +14,12 @@ import (
 	"github.com/vadapavmov/bricks/internal/app"
 )
 
-const Version = "v1.3.1"
+const Version = "v1.2.0"
 const MaxAllowedParallelDownloads = 5
 
 func main() {
 	// Define default values and usage messages for flags
-	downloadUrl := flag.String("url", "", "Download url")
+	downloadUrl := flag.String("url", "", "Download URL")
 	downloadPath := flag.String("path", ".", "Download path")
 	parallelDownloads := flag.Int("n", 3, "Number of parallel file downloads")
 	showVersion := flag.Bool("version", false, "Show version information")
@@ -31,8 +31,8 @@ func main() {
 		return
 	}
 
-	// Get dirId
-	baseURL, dirId := parseURL()
+	// Get dirId and base URL
+	baseURL, dirId := parseURL(*downloadUrl)  // Pass downloadUrl as an argument
 
 	// Build absolute path
 	abspath, err := filepath.Abs(*downloadPath)
@@ -53,7 +53,7 @@ func main() {
 	// Run the app
 	bricks := app.New(baseURL)
 	if err = bricks.Run(dirId, abspath, *parallelDownloads); err != nil {
-		log.Fatalf("failed to download %v", err)
+		log.Fatalf("failed to download: %v", err)
 	}
 }
 
@@ -72,7 +72,7 @@ func parseURL(downloadUrl string) (string, string) {
 	} else {
 		inputURL = strings.TrimSpace(downloadUrl)
 	}
-	
+
 	// Parse URL and extract UUID
 	parsedURL, err := url.Parse(inputURL)
 	if err != nil {
